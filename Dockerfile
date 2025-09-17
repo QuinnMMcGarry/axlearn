@@ -18,7 +18,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
     apt-get update -y -qq && \
     apt-get install -y -qq apt-transport-https ca-certificates gcc g++ \
-    git screen ca-certificates google-perftools google-cloud-cli python3.10-venv && \
+    git screen ca-certificates google-perftools google-cloud-cli python3.12-venv && \
     apt clean -y -qq
 
 # Setup.
@@ -92,7 +92,6 @@ FROM base AS tpu
 
 ARG EXTRAS=
 
-ENV UV_FIND_LINKS="https://storage.googleapis.com/jax-releases/libtpu_releases.html,https://storage.googleapis.com/axlearn-wheels/wheels.html"
 # Ensure we install the TPU version, even if building locally.
 # Jax will fallback to CPU when run on a machine without TPU.
 RUN uv pip install -qq --prerelease=allow .[core,tpu] && uv cache clean
@@ -106,7 +105,6 @@ COPY . .
 FROM base AS gpu
 
 # TODO(markblee): Support extras.
-ENV UV_FIND_LINKS="https://storage.googleapis.com/jax-releases/jax_cuda_releases.html,https://storage.googleapis.com/axlearn-wheels/wheels.html"
 # Enable the CUDA repository and install the required libraries (libnvrtc.so)
 RUN curl -o cuda-keyring_1.1-1_all.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
